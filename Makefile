@@ -1,6 +1,7 @@
 # Compiler and flags
-OCAMLC = ocamlc
-OCAMLFLAGS = -g
+OCAMLFIND = ocamlfind
+OCAMLC = $(OCAMLFIND) ocamlc
+OCAMLFLAGS = -g -package unix
 INCLUDES = -I src
 
 # Source files
@@ -15,7 +16,7 @@ all: $(TEST_EXEC)
 
 # Test executable for type inference testing
 $(TEST_EXEC): $(OBJ)
-	$(OCAMLC) $(OCAMLFLAGS) $(INCLUDES) unix.cma -o $(TEST_EXEC) $(OBJ)
+	$(OCAMLC) $(OCAMLFLAGS) $(INCLUDES) -o $(TEST_EXEC) $(OBJ)
 
 # Compile each .ml file into .cmo and .cmi files
 src/%.cmo: src/%.ml
@@ -23,10 +24,9 @@ src/%.cmo: src/%.ml
 
 # Run the tests
 test: $(TEST_EXEC)
-	@echo "Starting test_typing..."
 	./$(TEST_EXEC)
-
 
 # Clean up generated files
 clean:
 	rm -f src/*.cmo src/*.cmi $(TEST_EXEC)
+git 

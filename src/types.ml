@@ -208,17 +208,17 @@ open Unix
 (* Solve a system of equations with a timeout *)
 let solve_with_timeout (equations : equa) (timeout : float) : equa option =
   let start_time = Unix.gettimeofday () in
-  let rec solve eqs depth =
-    Printf.printf "Depth: %d, Equations count: %d\n" depth (List.length eqs); (* 添加调试信息 *)
+  let rec solve eqs =
     if Unix.gettimeofday () -. start_time > timeout then
       None  (* 超时，返回 None *)
     else
       match unify_step eqs with
       | None -> None  (* 无法统一，返回 None *)
       | Some [] -> Some []  (* 所有方程已解决，返回空系统，表示成功 *)
-      | Some new_eqs -> solve new_eqs (depth + 1)  (* 递归地解决新方程系统 *)
+      | Some new_eqs -> solve new_eqs  (* 递归地解决新方程系统 *)
+  
   in
-  solve equations 0
+  solve equations
 
 
 
@@ -255,4 +255,3 @@ infer_type：
 通过这些步骤，infer_type 函数可以在指定的时间内尝试推导项的类型，并返回成功的类型或不可类型化的结果。完成这些后，您可以使用示例项测试该类型推导函数。
 *)
 
-(*****************************3.8*********************************)
