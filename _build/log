@@ -1,10 +1,10 @@
-# dune build
+# dune exec src/test_typing.exe
 # OCAMLPARAM: unset
-# Workspace root: /home/ubuntu23/Bureau/Tas_Projet
-$ /usr/bin/nproc > /tmp/dune2888ee.output 2> /dev/null
+# Workspace root: /home/ubuntu23/Bureau/TAS-Lambda-Calcul
+$ /usr/bin/nproc > /tmp/dune30b796.output 2> /dev/null
 # Auto-detected concurrency: 16
 # disable binary cache
-$ /usr/bin/ocamlc.opt -config > /tmp/dune0775fd.output
+$ /usr/bin/ocamlc.opt -config > /tmp/dunef44e9f.output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -23,19 +23,20 @@ $ /usr/bin/ocamlc.opt -config > /tmp/dune0775fd.output
 #  ; env =
 #      map
 #        { "CAML_LD_LIBRARY_PATH" :
-#            "/home/ubuntu23/Bureau/Tas_Projet/_build/install/default/lib/stublibs"
+#            "/home/ubuntu23/Bureau/TAS-Lambda-Calcul/_build/install/default/lib/stublibs"
 #        ; "DUNE_OCAML_HARDCODED" : "/usr/lib/ocaml"
 #        ; "DUNE_OCAML_STDLIB" : "/usr/lib/ocaml"
-#        ; "DUNE_SOURCEROOT" : "/home/ubuntu23/Bureau/Tas_Projet"
-#        ; "INSIDE_DUNE" : "/home/ubuntu23/Bureau/Tas_Projet/_build/default"
+#        ; "DUNE_SOURCEROOT" : "/home/ubuntu23/Bureau/TAS-Lambda-Calcul"
+#        ; "INSIDE_DUNE" :
+#            "/home/ubuntu23/Bureau/TAS-Lambda-Calcul/_build/default"
 #        ; "MANPATH" :
-#            "/home/ubuntu23/Bureau/Tas_Projet/_build/install/default/bin"
+#            "/home/ubuntu23/Bureau/TAS-Lambda-Calcul/_build/install/default/bin"
 #        ; "OCAMLFIND_IGNORE_DUPS_IN" :
-#            "/home/ubuntu23/Bureau/Tas_Projet/_build/install/default/lib"
+#            "/home/ubuntu23/Bureau/TAS-Lambda-Calcul/_build/install/default/lib"
 #        ; "OCAMLPATH" :
-#            "/home/ubuntu23/Bureau/Tas_Projet/_build/install/default/lib"
+#            "/home/ubuntu23/Bureau/TAS-Lambda-Calcul/_build/install/default/lib"
 #        ; "OCAMLTOP_INCLUDE_PATH" :
-#            "/home/ubuntu23/Bureau/Tas_Projet/_build/install/default/lib/toplevel"
+#            "/home/ubuntu23/Bureau/TAS-Lambda-Calcul/_build/install/default/lib/toplevel"
 #        ; "OCAML_COLOR" : "always"
 #        ; "OPAMCOLOR" : "always"
 #        }
@@ -150,3 +151,10 @@ $ /usr/bin/ocamlc.opt -config > /tmp/dune0775fd.output
 #      ; windows_unicode = false
 #      }
 #  }
+# Workspace root: /home/ubuntu23/Bureau/TAS-Lambda-Calcul
+$ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.tas_lambda_calcul.objs/byte -no-alias-deps -opaque -open Tas_lambda_calcul -o src/.tas_lambda_calcul.objs/byte/tas_lambda_calcul__Types.cmo -c -impl src/types.ml)
+> File "src/types.ml", line 206, characters 0-9:
+> 206 | open Unix
+>       ^^^^^^^^^
+> Error (warning 33 [unused-open]): unused open Unix.
+[2]
