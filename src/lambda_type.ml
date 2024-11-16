@@ -36,11 +36,11 @@ let rec type_infer (env: type_env) (expr: lambda_expr) : lambda_type =
       let t2 = type_infer env e2 in
       if t1 = TypeInt && t2 = TypeInt then TypeInt
       else failwith "Opération arithmétique sur des types non entiers"
-  | Abstraction (x, body) ->
-      let arg_type = TypeInt in (* On suppose que l'argument est de type Int par défaut *)
-      let new_env = (x, arg_type) :: env in
-      let body_type = type_infer new_env body in
-      TypeArrow (arg_type, body_type)
+      | Abstraction (x, body) ->
+        let arg_type = TypeInt in
+        let new_env = (x, arg_type) :: env in
+        let body_type = type_infer new_env body in
+        TypeArrow (arg_type, body_type)
   | Application (e1, e2) ->
       let t1 = type_infer env e1 in
       let t2 = type_infer env e2 in
@@ -79,11 +79,23 @@ let rec type_infer (env: type_env) (expr: lambda_expr) : lambda_type =
       (match cond_type with
       | TypeList _ when cons_type = alt_type -> cons_type
       | _ -> failwith "Condition IfNil incorrecte")
-  | FixPoint f ->
-      let t = type_infer env f in
-      (match t with
-      | TypeArrow (arg_type, return_type) when arg_type = return_type -> arg_type
-      | _ -> failwith "FixPoint mal typé")
+
+      | FixPoint f ->
+        (* 推导 `f` 的类型 *)
+        let t = type_infer env f in
+        Printf.printf "FixPoint 输入类型：%s\n" (lambda_type_to_string t);
+        (match t with
+        | TypeArrow (arg_type, return_type) ->
+            if arg_type = return_type then return_type
+            else failwith ("FixPoint 类型不匹配：参数类型和返回类型必须一致。\n"
+                           ^ "参数类型：" ^ lambda_type_to_string arg_type
+                           ^ "，返回类型：" ^ lambda_type_to_string return_type)
+        | _ -> failwith "FixPoint 必须是函数类型 (T -> T)")
+    
+    
+    
+    
+    
   | LetBinding (x, value, body) ->
       let value_type = type_infer env value in
       let new_env = (x, value_type) :: env in

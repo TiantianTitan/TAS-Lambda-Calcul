@@ -42,8 +42,8 @@ $(TEST_EVAL_EXE): $(TEST_EVAL) $(AST_CMO) $(EVAL_CMO)
 	$(OCAMLC) -I $(EXEC) $(AST_CMO) $(EVAL_CMO) $< -o $@
 
 # Compile and Link Test for Lambda_type
-$(TEST_TYPE_EXE): $(TEST_TYPE) $(AST_CMO) $(TYPE_CMO)
-	$(OCAMLC) -I $(EXEC) $(AST_CMO) $(TYPE_CMO) $< -o $@
+$(TEST_TYPE_EXE): $(TEST_TYPE) $(AST_CMO) $(TYPE_CMO) $(EVAL_CMO)
+	$(OCAMLC) -I $(EXEC) $(AST_CMO) $(TYPE_CMO) $(EVAL_CMO) $< -o $@
 
 # Run tests
 test: $(TEST_EVAL_EXE) $(TEST_TYPE_EXE)
