@@ -72,6 +72,22 @@ let rec type_infer (env: type_env) (expr: lambda_expr) : lambda_type =
       let else_type = type_infer env else_branch in
       if cond_type = TypeInt && then_type = else_type then then_type
       else failwith "Condition IfZero incorrecte"
+  | IfNil (cond, cons, alt) ->
+      let cond_type = type_infer env cond in
+      let cons_type = type_infer env cons in
+      let alt_type = type_infer env alt in
+      (match cond_type with
+      | TypeList _ when cons_type = alt_type -> cons_type
+      | _ -> failwith "Condition IfNil incorrecte")
+  | FixPoint f ->
+      let t = type_infer env f in
+      (match t with
+      | TypeArrow (arg_type, return_type) when arg_type = return_type -> arg_type
+      | _ -> failwith "FixPoint mal typé")
+  | LetBinding (x, value, body) ->
+      let value_type = type_infer env value in
+      let new_env = (x, value_type) :: env in
+      type_infer new_env body
   | RefValue e ->
       let t = type_infer env e in
       TypeRef t
@@ -86,6 +102,21 @@ let rec type_infer (env: type_env) (expr: lambda_expr) : lambda_type =
           if t1 = t2 then TypeUnit
           else failwith "Assignation de types incompatibles"
       | _ -> failwith "Assignation sur un type non référence")
+  | UnitValue -> TypeUnit
+  | MemoryAddress _ -> failwith "Les adresses mémoire ne peuvent pas être directement typées"
+  | SumLeft e ->
+      let t = type_infer env e in
+      TypeArrow (t, TypeInt)
+  | SumRight e ->
+      let t = type_infer env e in
+      TypeArrow (TypeInt, t)
+  | SumMatch (e, _, left, right) ->
+      let e_type = type_infer env e in
+      let left_type = type_infer env left in
+      let right_type = type_infer env right in
+      if e_type = left_type && e_type = right_type then e_type
+      else failwith "SumMatch branches have incompatible types"
+
 
 (* Fonction pour inférer et afficher le type d'une expression *)
 let infer_and_print (env: type_env) (expr: lambda_expr) =

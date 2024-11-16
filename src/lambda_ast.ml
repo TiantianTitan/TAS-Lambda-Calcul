@@ -1,3 +1,5 @@
+(* lambda_eval.ml *)
+
 
 type 'a lambda_list = Nil | Node of 'a * 'a lambda_list
 and lambda_expr_list = lambda_expr lambda_list
@@ -66,3 +68,15 @@ and lambda_expr_to_string (expr: lambda_expr) : string =
 
 let print_lambda_expr expr =
   Printf.printf "%s\n" (lambda_expr_to_string expr)
+
+
+let rec substitute (var: string) (value: lambda_expr) (expr: lambda_expr): lambda_expr =
+  match expr with
+  | Variable x when x = var -> value
+  | Variable _ -> expr
+  | Application (e1, e2) -> Application (substitute var value e1, substitute var value e2)
+  | Abstraction (param, body) when param <> var -> Abstraction (param, substitute var value body)
+  | Addition (e1, e2) -> Addition (substitute var value e1, substitute var value e2)
+  | Subtraction (e1, e2) -> Subtraction (substitute var value e1, substitute var value e2)
+  | Multiplication (e1, e2) -> Multiplication (substitute var value e1, substitute var value e2)
+  | _ -> expr  

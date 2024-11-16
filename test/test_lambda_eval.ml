@@ -1,5 +1,6 @@
 
 open Lambda_ast
+open Lambda_eval
 
 (*opérations de mémoire de base*)
 let rec lookup_memory (address: int) (memory: memory): lambda_expr option =
