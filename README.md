@@ -18,73 +18,68 @@ Ce projet est un interpréteur du calcul lambda implémenté en OCaml. Il suppor
 
    ```bash
    ./exec/main
-
 3. **Quitter le REPL : Tapez exit pour quitter l'interpréteur.**
 
-4. **Exécuter les tests : Les tests se trouvent dans les fichiers**
-test_lambda_eval.ml et test_lambda_type.ml. Pour les exécuter :
+4. **Exécuter les tests : Les tests se trouvent dans les fichiers** test_lambda_eval.ml et test_lambda_type.ml. Pour les exécuter :
 
-   (```bash
-   make test)
-
+   ```bash
+   make test
 ## **Cas de test**
 Voici quelques exemples de commandes que vous pouvez entrer dans le REPL et leurs sorties correspondantes :
 
 1. **Entier**
 text
 
-> 1
-Expression : 1
-Évaluation : 1
-Résultat : 1
-
+   ```bash
+   > 1
+   Expression : 1
+   Évaluation : 1
+   Résultat : 1
 2. **Variable**
 text
-> x
-Expression : x
-Erreur : Variable non définie : x
-
+   ```bash
+   > x
+   Expression : x
+   Erreur : Variable non définie : x
 3. **Abstraction lambda**
 text
-
-> λx. x
-Expression : λx. x
-Évaluation : λx. x
-Résultat : λx. x
-
+   ```bash
+   > λx. x
+   Expression : λx. x
+   Évaluation : λx. x
+   Résultat : λx. x
 4. **Branche conditionnelle (condition vraie)**
 text
-
-> if 0 = 0 then 1 else 2
-Expression : if 0 = 0 then 1 else 2
-Évaluation : if 0 = 0 then 1 else 2
-Étape intermédiaire : 1
-Résultat : 1
-
+   ```bash
+   > if 0 = 0 then 1 else 2
+   Expression : if 0 = 0 then 1 else 2
+   Évaluation : if 0 = 0 then 1 else 2
+   Étape intermédiaire : 1
+   Résultat : 1
 5. **Branche conditionnelle (condition fausse)**
 text
-
-> if 1 = 0 then 3 else 4
-Expression : if 1 = 0 then 3 else 4
-Évaluation : if 1 = 0 then 3 else 4
-Étape intermédiaire : 4
-Résultat : 4
+   ```bash
+   > if 1 = 0 then 3 else 4
+   Expression : if 1 = 0 then 3 else 4
+   Évaluation : if 1 = 0 then 3 else 4
+   Étape intermédiaire : 4
+   Résultat : 4
 
 6. **Abstraction lambda avec arithmétique**
 text
-
-> λx. x + 1
-Expression : λx. (x + 1)
-Évaluation : λx. (x + 1)
-Résultat : λx. (x + 1)
+   ```bash
+   > λx. x + 1
+   Expression : λx. (x + 1)
+   Évaluation : λx. (x + 1)
+   Résultat : λx. (x + 1)
 
 7. **Abstraction lambda avec déclaration de variable**
 text
-
-> λy. let x = y + 1 in x * 2
-Expression : λy. let x = (y + 1) in (x * 2)
-Évaluation : λy. let x = (y + 1) in (x * 2)
-Résultat : λy. let x = (y + 1) in (x * 2)
+   ```bash
+   > λy. let x = y + 1 in x * 2
+   Expression : λy. let x = (y + 1) in (x * 2)
+   Évaluation : λy. let x = (y + 1) in (x * 2)
+   Résultat : λy. let x = (y + 1) in (x * 2)
 
 
 ## **Notes importantes**
@@ -101,11 +96,10 @@ Syntaxe des expressions :
 ## **Compilation et exécution**
 - Pour compiler et exécuter le projet :
 
-bash:
-make all
-./exec/main
-
+   ```bash
+   make all
+   ./exec/main
 - Pour exécuter les tests unitaires :
 
-bash:
-make test
+   ```bash
+   make test
