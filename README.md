@@ -24,8 +24,9 @@ Ce projet est un interpréteur du calcul lambda implémenté en OCaml. Il suppor
 4. **Exécuter les tests : Les tests se trouvent dans les fichiers**
 test_lambda_eval.ml et test_lambda_type.ml. Pour les exécuter :
 
-  ```bash
-   make test
+   (```bash
+   make test)
+
 ## **Cas de test**
 Voici quelques exemples de commandes que vous pouvez entrer dans le REPL et leurs sorties correspondantes :
 
