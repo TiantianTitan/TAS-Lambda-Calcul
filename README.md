@@ -16,17 +16,16 @@ Ce projet est un interpréteur du calcul lambda implémenté en OCaml. Il suppor
    make all
 2. **Lancer le REPL : Après compilation, lancez le REPL**(Read-Eval-Print Loop) avec la commande :
 
-bash:
-./exec/main
+   ```bash
+   ./exec/main
 
 3. **Quitter le REPL : Tapez exit pour quitter l'interpréteur.**
 
 4. **Exécuter les tests : Les tests se trouvent dans les fichiers**
 test_lambda_eval.ml et test_lambda_type.ml. Pour les exécuter :
 
-bash:
-make test
-
+  ```bash
+   make test
 ## **Cas de test**
 Voici quelques exemples de commandes que vous pouvez entrer dans le REPL et leurs sorties correspondantes :
 
