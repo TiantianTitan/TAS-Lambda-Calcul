@@ -1,8 +1,0 @@
-(library
- (name tas_lambda_calcul)
- (modules expr types))
-
-(executable
- (name test_typing)
- (modules test_typing)
- (libraries tas_lambda_calcul unix))

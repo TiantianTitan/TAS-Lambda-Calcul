@@ -1,6 +1,0 @@
-(** @canonical Tas_lambda_calcul.Expr *)
-module Expr = Tas_lambda_calcul__Expr
-
-
-(** @canonical Tas_lambda_calcul.Types *)
-module Types = Tas_lambda_calcul__Types
