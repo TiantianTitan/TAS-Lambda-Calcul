@@ -80,3 +80,6 @@ let rec substitute (var: string) (value: lambda_expr) (expr: lambda_expr): lambd
   | Subtraction (e1, e2) -> Subtraction (substitute var value e1, substitute var value e2)
   | Multiplication (e1, e2) -> Multiplication (substitute var value e1, substitute var value e2)
   | _ -> expr  
+
+
+  

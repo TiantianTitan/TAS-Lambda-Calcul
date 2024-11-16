@@ -50,6 +50,25 @@ test: $(TEST_EVAL_EXE) $(TEST_TYPE_EXE)
 	./$(TEST_EVAL_EXE)
 	./$(TEST_TYPE_EXE)
 
-# Clean up
+
+# Main executable
+$(MAIN_EXE): $(AST_CMO) $(EVAL_CMO) $(TYPE_CMO) $(SRC)/main.ml
+	$(OCAMLC) -I $(EXEC) str.cma $^ -o $@
+
+repl:
+	$(MAIN_EXE)
+
+# Clean-up
 clean:
 	rm -f $(EXEC)/*.cmo $(EXEC)/*.cmi $(EXEC)/*.o $(EXEC)/*.cmx $(EXEC)/*
+	rm -f $(MAIN_EXE)
+
+
+# test main
+# 1
+# x
+# λx. x
+# if 0 = 0 then 1 else 2
+# if 1 = 0 then 3 else 4
+# λx. x + 1
+# λy. let x = y + 1 in x * 2
