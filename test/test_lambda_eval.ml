@@ -195,3 +195,18 @@ and substitute_in_list (var: string) (value: lambda_expr) (lst: lambda_expr_list
   match lst with
   | Nil -> Nil
   | Node (head, tail) -> Node (substitute var value head, substitute_in_list var value tail)
+
+
+
+  (* let test_fixpoint () =
+    let expr = FixPoint (Abstraction ("x", Addition (Variable "x", Integer 1))) in
+    try
+      let result, _ = eval_to_normal_form expr [] in
+      Printf.printf "✅ Test FixPoint Passed: %s\n" (lambda_expr_to_string result)
+    with Failure msg ->
+      Printf.printf "❌ Test FixPoint Failed: %s\n" msg
+  
+  let () =
+    Printf.printf "--- Running Extended Eval Tests ---\n";
+    test_fixpoint ();
+   *)

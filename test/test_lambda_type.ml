@@ -41,3 +41,13 @@ let run_tests () =
 
 (* Lancer les tests *)
 let () = run_tests ()
+
+
+(* 测试递归类型 *)
+(* let test_recursive_type () =
+  let expr = FixPoint (Abstraction ("f", Abstraction ("x", Application (Variable "f", Variable "x")))) in
+  test_type_infer "Recursive Function Type" expr (TypeArrow (TypeInt, TypeInt))
+
+let () =
+  Printf.printf "--- Running Extended Type Tests ---\n";
+  test_recursive_type (); *)
