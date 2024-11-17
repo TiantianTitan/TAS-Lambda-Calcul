@@ -43,9 +43,10 @@ let new_memory_address () : int =
 (* Conversion d'une liste lambda en chaîne *)
 let rec lambda_list_to_string (lst: lambda_expr_list) : string =
   match lst with
-  | Nil -> "[]"
+  | Nil -> ""
   | Node (head, Nil) -> lambda_expr_to_string head
   | Node (head, tail) -> lambda_expr_to_string head ^ ", " ^ lambda_list_to_string tail
+
 
 (* Conversion d'une expression lambda en chaîne *)
 and lambda_expr_to_string (expr: lambda_expr) : string =
