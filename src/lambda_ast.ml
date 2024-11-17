@@ -46,6 +46,12 @@ and lambda_expr =
   | PVar of string
   | PWildcard
 
+  (* extension - Boucle *)
+  | While of lambda_expr * lambda_expr
+  | For of string * lambda_expr * lambda_expr * lambda_expr
+
+
+
 and memory_binding = int * lambda_expr
 and memory = memory_binding list
 

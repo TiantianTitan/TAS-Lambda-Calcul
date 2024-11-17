@@ -4,6 +4,7 @@ open Lambda_ast
 (* Définition des types pour la vérification de typage *)
 type lambda_type =
   | TypeInt
+  | TypeBool
   | TypeArrow of lambda_type * lambda_type
   | TypeList of lambda_type
   | TypeUnit
@@ -118,11 +119,7 @@ let rec type_infer (env: type_env) (expr: lambda_expr) : lambda_type =
                            ^ "参数类型：" ^ lambda_type_to_string arg_type
                            ^ "，返回类型：" ^ lambda_type_to_string return_type)
         | _ -> failwith "FixPoint 必须是函数类型 (T -> T)")
-    
-    
-    
-    
-    
+
   | LetBinding (x, value, body) ->
       let value_type = type_infer env value in
       let new_env = (x, value_type) :: env in
@@ -156,7 +153,20 @@ let rec type_infer (env: type_env) (expr: lambda_expr) : lambda_type =
       if e_type = left_type && e_type = right_type then e_type
       else failwith "SumMatch branches have incompatible types"
 
-
+  (* Extension - Boucle*)
+  | While (cond, body) ->
+    let cond_type = type_infer env cond in
+    let _ = type_infer env body in
+    if cond_type = TypeBool then TypeUnit
+    else failwith "La condition du while doit être booléenne"
+  | For (var, start_expr, stop_expr, body) ->
+    let start_type = type_infer env start_expr in
+    let stop_type = type_infer env stop_expr in
+    let new_env = (var, TypeInt) :: env in
+    let _ = type_infer new_env body in
+    if start_type = TypeInt && stop_type = TypeInt then TypeUnit
+    else failwith "Les bornes du for doivent être des entiers"
+  | _ -> failwith "Autres cas non pris en charge"
       
 
 (* Fonction pour inférer et afficher le type d'une expression *)

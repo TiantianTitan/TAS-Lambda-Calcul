@@ -44,6 +44,14 @@ let tests = [
            LambdaList (Node (Integer 1, Node (Integer 2, Node (Integer 3, Nil))))),
    TypeList TypeInt);
 
+  (* Boucles While et For *)
+  ("Boucle While",
+   While (Not (Boolean false), UnitValue),
+   TypeUnit);
+  ("Boucle For",
+   For ("i", Integer 1, Integer 3, UnitValue),
+   TypeUnit);
+
   (* Conditionnelles *)
   ("IfZero vrai", IfZero (Integer 0, Integer 1, Integer 2), TypeInt);
   ("IfZero faux", IfZero (Integer 1, Integer 1, Integer 2), TypeInt);

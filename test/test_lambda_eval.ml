@@ -55,6 +55,13 @@ let tests = [
   ("Création de référence", RefValue (Integer 5), MemoryAddress 1);
   ("Assignation de référence",
    Assign (RefValue (Integer 1), Integer 2), UnitValue);
+
+  (* Boucles While et For *)
+  ("Boucle While simple",
+   While (Not (Variable "x"), Assign (Variable "x", Integer 1)), UnitValue);
+  ("Boucle For simple",
+   For ("i", Integer 1, Integer 3, UnitValue), UnitValue);
+
 ]
 
 (* Fonction principale pour exécuter tous les tests *)

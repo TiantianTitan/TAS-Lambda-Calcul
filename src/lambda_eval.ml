@@ -237,6 +237,31 @@ and substitute (var: string) (value: lambda_expr) (expr: lambda_expr): lambda_ex
     | (_, PWildcard) -> true
     | _ -> false
 
+  (* extension - Boucle *)
+  `(* While loop *)
+  | While (cond, body) ->
+    let rec loop memory =
+      match eval_step cond memory with
+      | Some (Boolean true, memory') ->
+          let _, memory'' = eval_step body memory' in
+          loop memory''
+      | Some (Boolean false, memory') -> Some (UnitValue, memory')
+      | _ -> failwith "La condition du while doit être booléenne"
+    in
+    loop memory
+
+  (* For loop *)
+  | For (var, start_expr, stop_expr, body) ->
+    let (Integer start, memory') = eval_step start_expr memory |> Option.get in
+    let (Integer stop, memory'') = eval_step stop_expr memory' |> Option.get in
+    let rec loop i mem =
+      if i > stop then Some (UnitValue, mem)
+      else
+        let mem' = eval_step (LetBinding (var, Integer i, body)) mem |> Option.get |> snd in
+        loop (i + 1) mem'
+    in
+    loop start memory''
+
 
   | _ -> expr
 
