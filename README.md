@@ -40,7 +40,7 @@ text
    ```bash
    > x
    Expression : x
-   Erreur : Variable non définie : x
+   Erreur : Variable non trouvée dans environnement : x
 3. **Abstraction lambda**
 text
    ```bash
@@ -81,7 +81,42 @@ text
    Évaluation : λy. let x = (y + 1) in (x * 2)
    Résultat : λy. let x = (y + 1) in (x * 2)
 
+8. **List**
+   ```bash
+   > []
+   Expression : []
+   Type : [Int]
+   Résultat : []
 
+   > [1, 2, 3]
+   Expression : [1, 2, 3]
+   Type : [Int]
+   Résultat : [1, 2, 3]
+
+   > head([1, 2, 3])
+   Expression : head([1, 2, 3])
+   Évaluation : head([1, 2, 3])
+   Résultat : 1
+
+   > tail([1, 2, 3])
+   Expression : tail([1, 2, 3])
+   Évaluation : tail([1, 2, 3])
+   Résultat : [2, 3]
+
+   > length([1, 2, 3])
+   Expression : length([1, 2, 3])
+   Évaluation : length([1, 2, 3])
+   Résultat : 3
+
+   > [1, [2, 3], 4]
+   Expression : [1, [2, 3], 4]
+   Type : [Int]
+   Résultat : [1, [2, 3], 4]
+
+   > tail([1, [2, 3], 4])
+   Expression : tail([1, [2, 3], 4])
+   Type : Int
+   Résultat : [[2, 3], 4]
 ## **Notes importantes**
 
 Syntaxe des expressions :

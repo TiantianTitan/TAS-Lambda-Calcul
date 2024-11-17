@@ -60,14 +60,31 @@ let rec parse_lambda_expr (line: string): lambda_expr =
       failwith "Erreur de syntaxe dans length"
   else if String.starts_with ~prefix:"[" line && String.ends_with ~suffix:"]" line then
     let inside = String.sub line 1 (String.length line - 2) in
-    if inside = "" then LambdaList Nil
-    else
-      let elements = String.split_on_char ',' inside |> List.map String.trim in
-      let rec parse_list = function
-        | [] -> Nil
-        | h :: t -> Node (parse_lambda_expr h, parse_list t)
+    let rec parse_list_elements (s: string) =
+      let buffer = Buffer.create 16 in
+      let rec aux i depth acc =
+        if i >= String.length s then
+          if Buffer.length buffer > 0 then
+            acc @ [Buffer.contents buffer |> String.trim]
+          else acc
+        else
+          let c = s.[i] in
+          match c with
+          | '[' -> Buffer.add_char buffer c; aux (i + 1) (depth + 1) acc
+          | ']' -> Buffer.add_char buffer c; aux (i + 1) (depth - 1) acc
+          | ',' when depth = 0 ->
+              acc @ [Buffer.contents buffer |> String.trim]
+              |> fun acc' -> Buffer.clear buffer; aux (i + 1) depth acc'
+          | _ -> Buffer.add_char buffer c; aux (i + 1) depth acc
       in
-      LambdaList (parse_list elements)
+      aux 0 0 []
+    in
+    let elements = parse_list_elements inside in
+    let rec parse_list = function
+      | [] -> Nil
+      | h :: t -> Node (parse_lambda_expr h, parse_list t)
+    in
+    LambdaList (parse_list elements)
   else if String.contains line '+' then
     let parts = String.split_on_char '+' line in
     if List.length parts <> 2 then failwith "Erreur de syntaxe dans l'addition"
@@ -95,8 +112,6 @@ let rec parse_lambda_expr (line: string): lambda_expr =
     Variable (String.trim line)
   else
     failwith ("Erreur de syntaxe : " ^ line)
-
-
 
 (* Fonction REPL : boucle interactive *)
 let rec repl memory =
