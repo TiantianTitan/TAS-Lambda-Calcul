@@ -51,7 +51,7 @@ let tests = [
   ("Boucle For",
    For ("i", Integer 1, Integer 3, UnitValue),
    TypeUnit);
-
+ 
   (* Conditionnelles *)
   ("IfZero vrai", IfZero (Integer 0, Integer 1, Integer 2), TypeInt);
   ("IfZero faux", IfZero (Integer 1, Integer 1, Integer 2), TypeInt);
