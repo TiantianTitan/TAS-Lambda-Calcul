@@ -2,21 +2,10 @@ open Lambda_ast
 open Lambda_eval
 open Lambda_type
 
+(* Fonction pour analyser une ligne en une expression lambda *)
 let rec parse_lambda_expr (line: string): lambda_expr =
   let line = String.trim line in
-  if line = "[]" then
-    LambdaList Nil (* Représente une liste vide *)
-  else if String.starts_with ~prefix:"[" line && String.ends_with ~suffix:"]" line then
-    (* Analyse d'une liste non vide, par exemple [1, 2] *)
-    let inside = String.sub line 1 (String.length line - 2) in
-    let elements = String.split_on_char ',' inside in
-    let rec build_list = function
-      | [] -> Nil
-      | x :: xs -> Node (parse_lambda_expr (String.trim x), build_list xs)
-    in
-    LambdaList (build_list elements)
-  else if String.starts_with ~prefix:"if" line then
-    (* Analyse de la structure conditionnelle *)
+  if String.starts_with ~prefix:"if" line then
     try
       let regex = Str.regexp "if \\(.*\\) = 0 then \\(.*\\) else \\(.*\\)" in
       if Str.string_match regex line 0 then
@@ -28,7 +17,6 @@ let rec parse_lambda_expr (line: string): lambda_expr =
         failwith "Erreur de syntaxe dans if-then-else"
     with _ ->
       failwith "Erreur de syntaxe dans if-then-else"
-  (* Autres cas inchangés *)
   else if String.starts_with ~prefix:"λ" line || String.starts_with ~prefix:"\\" line then
     let regex = Str.regexp "\\(λ\\|\\\\\\)\\([a-zA-Z0-9]+\\)\\.\\(.*\\)" in
     if Str.string_match regex line 0 then
@@ -49,6 +37,37 @@ let rec parse_lambda_expr (line: string): lambda_expr =
       LetBinding (var, parse_lambda_expr value, parse_lambda_expr body)
     else
       failwith "Erreur de syntaxe dans let-in"
+  else if String.starts_with ~prefix:"head" line then
+    let regex = Str.regexp "head(\\(.*\\))" in
+    if Str.string_match regex line 0 then
+      let list_expr = Str.matched_group 1 line in
+      Head (parse_lambda_expr list_expr)
+    else
+      failwith "Erreur de syntaxe dans head"
+  else if String.starts_with ~prefix:"tail" line then
+    let regex = Str.regexp "tail(\\(.*\\))" in
+    if Str.string_match regex line 0 then
+      let list_expr = Str.matched_group 1 line in
+      Tail (parse_lambda_expr list_expr)
+    else
+      failwith "Erreur de syntaxe dans tail"
+  else if String.starts_with ~prefix:"length" line then
+    let regex = Str.regexp "length(\\(.*\\))" in
+    if Str.string_match regex line 0 then
+      let list_expr = Str.matched_group 1 line in
+      Length (parse_lambda_expr list_expr)
+    else
+      failwith "Erreur de syntaxe dans length"
+  else if String.starts_with ~prefix:"[" line && String.ends_with ~suffix:"]" line then
+    let inside = String.sub line 1 (String.length line - 2) in
+    if inside = "" then LambdaList Nil
+    else
+      let elements = String.split_on_char ',' inside |> List.map String.trim in
+      let rec parse_list = function
+        | [] -> Nil
+        | h :: t -> Node (parse_lambda_expr h, parse_list t)
+      in
+      LambdaList (parse_list elements)
   else if String.contains line '+' then
     let parts = String.split_on_char '+' line in
     if List.length parts <> 2 then failwith "Erreur de syntaxe dans l'addition"
@@ -76,6 +95,7 @@ let rec parse_lambda_expr (line: string): lambda_expr =
     Variable (String.trim line)
   else
     failwith ("Erreur de syntaxe : " ^ line)
+
 
 
 (* Fonction REPL : boucle interactive *)
