@@ -44,6 +44,20 @@ let rec type_infer (env: type_env) (expr: lambda_expr) : lambda_type =
     if t = TypeBool then TypeBool
     else failwith "Not appliqué sur un type non booléen"
 
+  (* extension - Match *)
+  | Match (expr, branches) ->
+    let expr_type = type_infer env expr in
+    let rec check_branches bs =
+      match bs with
+      | [] -> failwith "Aucun branche valide"
+      | (_, branch) :: rest ->
+          let branch_type = type_infer env branch in
+          if branch_type = expr_type then check_branches rest
+          else failwith "Types incompatibles dans les branches"
+    in
+    check_branches branches
+
+
   | Addition (e1, e2) | Subtraction (e1, e2) | Multiplication (e1, e2) ->
       let t1 = type_infer env e1 in
       let t2 = type_infer env e2 in

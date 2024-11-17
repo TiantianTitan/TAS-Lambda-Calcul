@@ -38,7 +38,13 @@ and lambda_expr =
   | Map of lambda_expr * lambda_expr
   | Filter of lambda_expr * lambda_expr
 
-
+  (* extension - Match *)
+  | Match of lambda_expr * (lambda_pattern * lambda_expr) list
+  and lambda_pattern =
+  | PInt of int
+  | PBool of bool
+  | PVar of string
+  | PWildcard
 
 and memory_binding = int * lambda_expr
 and memory = memory_binding list

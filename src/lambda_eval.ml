@@ -201,22 +201,41 @@ and substitute (var: string) (value: lambda_expr) (expr: lambda_expr): lambda_ex
       | Node (_, tail) -> 1 + len tail
     in
     Some (Integer (len lst), memory)
-| Map (func, LambdaList lst) ->
-    let rec map f l =
-      match l with
-      | Nil -> Nil
-      | Node (head, tail) -> Node (eval_to_normal_form (Application (f, head)) memory, map f tail)
+
+  | Map (func, LambdaList lst) ->
+      let rec map f l =
+        match l with
+        | Nil -> Nil
+        | Node (head, tail) -> Node (eval_to_normal_form (Application (f, head)) memory, map f tail)
+      in
+      Some (LambdaList (map func lst), memory)
+  | Filter (func, LambdaList lst) ->
+      let rec filter f l =
+        match l with
+        | Nil -> Nil
+        | Node (head, tail) ->
+            let result, _ = eval_to_normal_form (Application (f, head)) memory in
+            if result = Boolean true then Node (head, filter f tail) else filter f tail
+      in
+      Some (LambdaList (filter func lst), memory)
+
+  (* extension - Match *)
+  | Match (expr, branches) ->
+    let rec eval_match e bs =
+      match bs with
+      | [] -> failwith "Aucun modèle correspondant"
+      | (pattern, branch) :: rest ->
+          if pattern_matches e pattern then eval_to_normal_form branch memory
+          else eval_match e rest
     in
-    Some (LambdaList (map func lst), memory)
-| Filter (func, LambdaList lst) ->
-    let rec filter f l =
-      match l with
-      | Nil -> Nil
-      | Node (head, tail) ->
-          let result, _ = eval_to_normal_form (Application (f, head)) memory in
-          if result = Boolean true then Node (head, filter f tail) else filter f tail
-    in
-    Some (LambdaList (filter func lst), memory)
+    eval_match expr branches
+  and pattern_matches expr pattern =
+    match (expr, pattern) with
+    | (Integer n, PInt m) -> n = m
+    | (Boolean b, PBool p) -> b = p
+    | (_, PVar _) -> true
+    | (_, PWildcard) -> true
+    | _ -> false
 
 
   | _ -> expr

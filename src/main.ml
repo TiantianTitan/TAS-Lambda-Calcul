@@ -96,6 +96,17 @@ let rec parse_lambda_expr (line: string): lambda_expr =
     Integer (int_of_string (String.trim line))
   else if String.for_all (fun c -> c >= 'a' && c <= 'z') (String.trim line) then
     Variable (String.trim line)
+  
+  (* Extension Match *)
+  else if String.starts_with ~prefix:"match" line then
+      let regex = Str.regexp "match \\(.*\\) with \\(.*\\)" in
+      if Str.string_match regex line 0 then
+        let expr = Str.matched_group 1 line in
+        let branches = Str.matched_group 2 line in
+        let parsed_branches = parse_branches branches in
+        Match (parse_lambda_expr expr, parsed_branches)
+      else
+        failwith "Erreur de syntaxe dans match-with"
   else
     failwith ("Erreur de syntaxe : " ^ line)
 
