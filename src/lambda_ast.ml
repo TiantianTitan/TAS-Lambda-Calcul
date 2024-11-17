@@ -26,32 +26,6 @@ and lambda_expr =
   | SumLeft of lambda_expr 
   | SumRight of lambda_expr 
   | SumMatch of lambda_expr * string * lambda_expr * lambda_expr
-
-  (* extension - boolean *)
-  | Boolean of bool
-  | And of lambda_expr * lambda_expr
-  | Or of lambda_expr * lambda_expr
-  | Not of lambda_expr
-
-  (* extension - List *)
-  | Length of lambda_expr
-  | Map of lambda_expr * lambda_expr
-  | Filter of lambda_expr * lambda_expr
-
-  (* extension - Match *)
-  | Match of lambda_expr * (lambda_pattern * lambda_expr) list
-  and lambda_pattern =
-  | PInt of int
-  | PBool of bool
-  | PVar of string
-  | PWildcard
-
-  (* extension - Boucle *)
-  | While of lambda_expr * lambda_expr
-  | For of string * lambda_expr * lambda_expr * lambda_expr
-
-
-
 and memory_binding = int * lambda_expr
 and memory = memory_binding list
 

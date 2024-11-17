@@ -4,7 +4,6 @@ open Lambda_ast
 (* Définition des types pour la vérification de typage *)
 type lambda_type =
   | TypeInt
-  | TypeBool
   | TypeArrow of lambda_type * lambda_type
   | TypeList of lambda_type
   | TypeUnit
@@ -32,33 +31,6 @@ let rec type_infer (env: type_env) (expr: lambda_expr) : lambda_type =
   match expr with
   | Integer _ -> TypeInt
   | Variable x -> lookup_type x env
-
-  (* extension - boolean *)
-  | Boolean _ -> TypeBool
-  | And (e1, e2) | Or (e1, e2) ->
-    let t1 = type_infer env e1 in
-    let t2 = type_infer env e2 in
-    if t1 = TypeBool && t2 = TypeBool then TypeBool
-    else failwith "Opération logique sur des types non booléens"
-  | Not e ->
-    let t = type_infer env e in
-    if t = TypeBool then TypeBool
-    else failwith "Not appliqué sur un type non booléen"
-
-  (* extension - Match *)
-  | Match (expr, branches) ->
-    let expr_type = type_infer env expr in
-    let rec check_branches bs =
-      match bs with
-      | [] -> failwith "Aucun branche valide"
-      | (_, branch) :: rest ->
-          let branch_type = type_infer env branch in
-          if branch_type = expr_type then check_branches rest
-          else failwith "Types incompatibles dans les branches"
-    in
-    check_branches branches
-
-
   | Addition (e1, e2) | Subtraction (e1, e2) | Multiplication (e1, e2) ->
       let t1 = type_infer env e1 in
       let t2 = type_infer env e2 in
@@ -119,7 +91,11 @@ let rec type_infer (env: type_env) (expr: lambda_expr) : lambda_type =
                            ^ "参数类型：" ^ lambda_type_to_string arg_type
                            ^ "，返回类型：" ^ lambda_type_to_string return_type)
         | _ -> failwith "FixPoint 必须是函数类型 (T -> T)")
-
+    
+    
+    
+    
+    
   | LetBinding (x, value, body) ->
       let value_type = type_infer env value in
       let new_env = (x, value_type) :: env in
@@ -153,21 +129,6 @@ let rec type_infer (env: type_env) (expr: lambda_expr) : lambda_type =
       if e_type = left_type && e_type = right_type then e_type
       else failwith "SumMatch branches have incompatible types"
 
-  (* Extension - Boucle*)
-  | While (cond, body) ->
-    let cond_type = type_infer env cond in
-    let _ = type_infer env body in
-    if cond_type = TypeBool then TypeUnit
-    else failwith "La condition du while doit être booléenne"
-  | For (var, start_expr, stop_expr, body) ->
-    let start_type = type_infer env start_expr in
-    let stop_type = type_infer env stop_expr in
-    let new_env = (var, TypeInt) :: env in
-    let _ = type_infer new_env body in
-    if start_type = TypeInt && stop_type = TypeInt then TypeUnit
-    else failwith "Les bornes du for doivent être des entiers"
-  | _ -> failwith "Autres cas non pris en charge"
-      
 
 (* Fonction pour inférer et afficher le type d'une expression *)
 let infer_and_print (env: type_env) (expr: lambda_expr) =
