@@ -65,16 +65,7 @@ let rec parse_lambda_expr (line: string): lambda_expr =
   else
     failwith ("Erreur de syntaxe : " ^ line)
 
-(* Évaluation d'une expression en forme normale *)
-let rec eval_to_normal_form (expr: lambda_expr) (memory: memory): (lambda_expr * memory) =
-  Printf.printf "Évaluation : %s\n" (lambda_expr_to_string expr);
-  match eval_step expr memory with
-  | Some (next_expr, updated_memory) ->
-      Printf.printf "Étape intermédiaire : %s\n" (lambda_expr_to_string next_expr);
-      eval_to_normal_form next_expr updated_memory
-  | None -> (expr, memory)
-
-(* Fonction REPL : Read-Eval-Print Loop *)
+(* Fonction REPL : boucle interactive *)
 let rec repl memory =
   Printf.printf "> ";
   match read_line () with
@@ -83,6 +74,8 @@ let rec repl memory =
       (try
          let expr = parse_lambda_expr line in
          Printf.printf "Expression : %s\n" (lambda_expr_to_string expr);
+         let inferred_type = type_infer [] expr in
+         Printf.printf "Type : %s\n" (lambda_type_to_string inferred_type);
          let result, updated_memory = eval_to_normal_form expr memory in
          Printf.printf "Résultat : %s\n" (lambda_expr_to_string result);
          repl updated_memory
@@ -90,4 +83,5 @@ let rec repl memory =
          Printf.printf "Erreur : %s\n" msg;
          repl memory)
 
+(* Démarrage du programme *)
 let () = repl []

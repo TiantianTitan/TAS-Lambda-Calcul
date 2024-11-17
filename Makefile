@@ -1,74 +1,60 @@
-# Paths
+# Variables pour les chemins et les fichiers
 OCAMLC = ocamlc
 SRC = ./src
 TEST = ./test
 EXEC = ./exec
 
-# Modules
+# Modules compilés
 AST_CMO = $(EXEC)/lambda_ast.cmo
 EVAL_CMO = $(EXEC)/lambda_eval.cmo
 TYPE_CMO = $(EXEC)/lambda_type.cmo
 
-# Test Files
+# Fichiers de test
 TEST_EVAL = $(TEST)/test_lambda_eval.ml
 TEST_TYPE = $(TEST)/test_lambda_type.ml
 
-# Executables
+# Exécutables
 MAIN_EXE = $(EXEC)/main
 TEST_EVAL_EXE = $(EXEC)/test_lambda_eval
 TEST_TYPE_EXE = $(EXEC)/test_lambda_type
 
-# Default target
+# Cible par défaut
 all: $(MAIN_EXE)
 
-# Main executable
+# Compilation de l'exécutable principal
 $(MAIN_EXE): $(AST_CMO) $(EVAL_CMO) $(TYPE_CMO) $(SRC)/main.ml
-	$(OCAMLC) -I $(EXEC) $^ -o $@
+	$(OCAMLC) -I $(EXEC) str.cma $^ -o $@
 
-# Compile lambda_ast
+# Compilation du module lambda_ast
 $(AST_CMO): $(SRC)/lambda_ast.ml
 	$(OCAMLC) -o $@ -c $<
 
-# Compile lambda_eval
+# Compilation du module lambda_eval
 $(EVAL_CMO): $(SRC)/lambda_eval.ml $(AST_CMO)
 	$(OCAMLC) -I $(EXEC) -o $@ -c $<
 
-# Compile lambda_type
+# Compilation du module lambda_type
 $(TYPE_CMO): $(SRC)/lambda_type.ml $(AST_CMO)
 	$(OCAMLC) -I $(EXEC) -o $@ -c $<
 
-# Compile and Link Test for Lambda_eval
+# Compilation et lien pour le test de lambda_eval
 $(TEST_EVAL_EXE): $(TEST_EVAL) $(AST_CMO) $(EVAL_CMO)
 	$(OCAMLC) -I $(EXEC) $(AST_CMO) $(EVAL_CMO) $< -o $@
 
-# Compile and Link Test for Lambda_type
+# Compilation et lien pour le test de lambda_type
 $(TEST_TYPE_EXE): $(TEST_TYPE) $(AST_CMO) $(TYPE_CMO) $(EVAL_CMO)
 	$(OCAMLC) -I $(EXEC) $(AST_CMO) $(TYPE_CMO) $(EVAL_CMO) $< -o $@
 
-# Run tests
+# Cible pour exécuter les tests
 test: $(TEST_EVAL_EXE) $(TEST_TYPE_EXE)
 	./$(TEST_EVAL_EXE)
 	./$(TEST_TYPE_EXE)
 
-
-# Main executable
-$(MAIN_EXE): $(AST_CMO) $(EVAL_CMO) $(TYPE_CMO) $(SRC)/main.ml
-	$(OCAMLC) -I $(EXEC) str.cma $^ -o $@
-
-repl:
-	$(MAIN_EXE)
-
-# Clean-up
+# Nettoyage des fichiers générés
 clean:
 	rm -f $(EXEC)/*.cmo $(EXEC)/*.cmi $(EXEC)/*.o $(EXEC)/*.cmx $(EXEC)/*
 	rm -f $(MAIN_EXE)
 
-
-# test main
-# 1
-# x
-# λx. x
-# if 0 = 0 then 1 else 2
-# if 1 = 0 then 3 else 4
-# λx. x + 1
-# λy. let x = y + 1 in x * 2
+# Exécution de REPL
+repl:
+	./$(MAIN_EXE)
