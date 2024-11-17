@@ -187,6 +187,38 @@ and substitute (var: string) (value: lambda_expr) (expr: lambda_expr): lambda_ex
   | RefValue e -> RefValue (substitute var value e)
   | Deref e -> Deref (substitute var value e)
   | Assign (e1, e2) -> Assign (substitute var value e1, substitute var value e2)
+  (* extension - boolean *)
+  | And (Boolean true, Boolean true) -> Some (Boolean true, memory)
+  | And (Boolean _, Boolean _) -> Some (Boolean false, memory)
+  | Or (Boolean false, Boolean false) -> Some (Boolean false, memory)
+  | Or (Boolean _, Boolean _) -> Some (Boolean true, memory)
+  | Not (Boolean b) -> Some (Boolean (not b), memory)
+  (* extension - List *)
+  | Length (LambdaList lst) ->
+    let rec len l =
+      match l with
+      | Nil -> 0
+      | Node (_, tail) -> 1 + len tail
+    in
+    Some (Integer (len lst), memory)
+| Map (func, LambdaList lst) ->
+    let rec map f l =
+      match l with
+      | Nil -> Nil
+      | Node (head, tail) -> Node (eval_to_normal_form (Application (f, head)) memory, map f tail)
+    in
+    Some (LambdaList (map func lst), memory)
+| Filter (func, LambdaList lst) ->
+    let rec filter f l =
+      match l with
+      | Nil -> Nil
+      | Node (head, tail) ->
+          let result, _ = eval_to_normal_form (Application (f, head)) memory in
+          if result = Boolean true then Node (head, filter f tail) else filter f tail
+    in
+    Some (LambdaList (filter func lst), memory)
+
+
   | _ -> expr
 
 and substitute_in_list (var: string) (value: lambda_expr) (lst: lambda_expr_list): lambda_expr_list =

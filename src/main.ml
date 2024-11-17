@@ -15,19 +15,51 @@ let rec parse_lambda_expr (line: string): lambda_expr =
         IfZero (parse_lambda_expr cond, parse_lambda_expr then_branch, parse_lambda_expr else_branch)
       else
         failwith "Erreur de syntaxe dans if-then-else"
-    with _ ->
-      failwith "Erreur de syntaxe dans if-then-else"
-  else if String.starts_with ~prefix:"λ" line || String.starts_with ~prefix:"\\" line then
-    let regex = Str.regexp "\\(λ\\|\\\\\\)\\([a-zA-Z0-9]+\\)\\.\\(.*\\)" in
-    if Str.string_match regex line 0 then
-      let param = Str.matched_group 2 line in
-      let body = Str.matched_group 3 line in
-      Abstraction (param, parse_lambda_expr body)
+    with _ -> failwith "Erreur de syntaxe dans if-then-else"
+  (* Parse Boolean values *)
+  else if line = "true" then Boolean true
+  else if line = "false" then Boolean false
+  (* Parse Boolean operations *)
+  else if String.contains line '&' then
+    let parts = String.split_on_char '&' line in
+    if List.length parts <> 2 then failwith "Erreur de syntaxe dans l'opération AND"
     else
-      failwith "Erreur de syntaxe dans lambda"
-  else if String.starts_with ~prefix:"(" line && String.ends_with ~suffix:")" line then
-    let inside = String.sub line 1 (String.length line - 2) in
-    parse_lambda_expr inside
+      let left = parse_lambda_expr (String.trim (List.nth parts 0)) in
+      let right = parse_lambda_expr (String.trim (List.nth parts 1)) in
+      And (left, right)
+  else if String.contains line '|' then
+    let parts = String.split_on_char '|' line in
+    if List.length parts <> 2 then failwith "Erreur de syntaxe dans l'opération OR"
+    else
+      let left = parse_lambda_expr (String.trim (List.nth parts 0)) in
+      let right = parse_lambda_expr (String.trim (List.nth parts 1)) in
+      Or (left, right)
+  else if String.starts_with ~prefix:"not" line then
+    let expr = String.sub line 3 (String.length line - 3) |> String.trim in
+    Not (parse_lambda_expr expr)
+  (* Parse length operation *)
+  else if String.starts_with ~prefix:"length(" line && String.ends_with ~suffix:")" line then
+    let inside = String.sub line 7 (String.length line - 8) in
+    Length (parse_lambda_expr inside)
+  (* Parse map operation *)
+  else if String.starts_with ~prefix:"map(" line && String.ends_with ~suffix:")" line then
+    let inside = String.sub line 4 (String.length line - 5) in
+    let parts = String.split_on_char ',' inside in
+    if List.length parts <> 2 then failwith "Erreur de syntaxe dans map"
+    else
+      let func = parse_lambda_expr (String.trim (List.nth parts 0)) in
+      let lst = parse_lambda_expr (String.trim (List.nth parts 1)) in
+      Map (func, lst)
+  (* Parse filter operation *)
+  else if String.starts_with ~prefix:"filter(" line && String.ends_with ~suffix:")" line then
+    let inside = String.sub line 7 (String.length line - 8) in
+    let parts = String.split_on_char ',' inside in
+    if List.length parts <> 2 then failwith "Erreur de syntaxe dans filter"
+    else
+      let func = parse_lambda_expr (String.trim (List.nth parts 0)) in
+      let lst = parse_lambda_expr (String.trim (List.nth parts 1)) in
+      Filter (func, lst)
+  (* Parse let-in *)
   else if String.starts_with ~prefix:"let" line then
     let regex = Str.regexp "let \\([a-zA-Z]+\\) = \\(.*\\) in \\(.*\\)" in
     if Str.string_match regex line 0 then
@@ -37,6 +69,7 @@ let rec parse_lambda_expr (line: string): lambda_expr =
       LetBinding (var, parse_lambda_expr value, parse_lambda_expr body)
     else
       failwith "Erreur de syntaxe dans let-in"
+  (* Parse arithmetic and variable operations *)
   else if String.contains line '+' then
     let parts = String.split_on_char '+' line in
     if List.length parts <> 2 then failwith "Erreur de syntaxe dans l'addition"
@@ -58,6 +91,7 @@ let rec parse_lambda_expr (line: string): lambda_expr =
       let left = parse_lambda_expr (String.trim (List.nth parts 0)) in
       let right = parse_lambda_expr (String.trim (List.nth parts 1)) in
       Multiplication (left, right)
+  (* Parse numbers and variables *)
   else if String.for_all (fun c -> c >= '0' && c <= '9') (String.trim line) then
     Integer (int_of_string (String.trim line))
   else if String.for_all (fun c -> c >= 'a' && c <= 'z') (String.trim line) then

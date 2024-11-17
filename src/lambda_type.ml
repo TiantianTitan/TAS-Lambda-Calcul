@@ -31,6 +31,19 @@ let rec type_infer (env: type_env) (expr: lambda_expr) : lambda_type =
   match expr with
   | Integer _ -> TypeInt
   | Variable x -> lookup_type x env
+
+  (* extension - boolean *)
+  | Boolean _ -> TypeBool
+  | And (e1, e2) | Or (e1, e2) ->
+    let t1 = type_infer env e1 in
+    let t2 = type_infer env e2 in
+    if t1 = TypeBool && t2 = TypeBool then TypeBool
+    else failwith "Opération logique sur des types non booléens"
+  | Not e ->
+    let t = type_infer env e in
+    if t = TypeBool then TypeBool
+    else failwith "Not appliqué sur un type non booléen"
+
   | Addition (e1, e2) | Subtraction (e1, e2) | Multiplication (e1, e2) ->
       let t1 = type_infer env e1 in
       let t2 = type_infer env e2 in
@@ -129,6 +142,8 @@ let rec type_infer (env: type_env) (expr: lambda_expr) : lambda_type =
       if e_type = left_type && e_type = right_type then e_type
       else failwith "SumMatch branches have incompatible types"
 
+
+      
 
 (* Fonction pour inférer et afficher le type d'une expression *)
 let infer_and_print (env: type_env) (expr: lambda_expr) =
